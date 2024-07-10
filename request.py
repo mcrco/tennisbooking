@@ -90,4 +90,4 @@ response = requests.post(url, headers=headers, data=timeslot_56_data)
 print('Request for 5-6: ', response.json()['Success'])
 
 response = requests.post(url, headers=headers, data=timeslot_67_data)
-print('Request for 5-6: ', response.json()['Success'])
+print('Request for 6-7: ', response.json()['Success'])
