@@ -2,3 +2,4 @@ cookie
 credentials.json
 run.sh
 __pycache__
+logfile.log
