@@ -1,6 +1,7 @@
 import argparse
 import time
 import json
+import os
 
 from cryptography.fernet import Fernet
 
@@ -12,12 +13,16 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from pyvirtualdisplay.display import Display
+
 parser = argparse.ArgumentParser() 
 parser.add_argument('-k', '--key', type=str)
 
 args = parser.parse_args()
 
 # Set up the WebDriver
+display = Display(visible=False, size=(1080, 1920))  
+display.start()
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 # Open the login page
