@@ -47,9 +47,9 @@ try:
     element = WebDriverWait(driver, 5).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, '.btn.btn-primary.btn-block.btn-external-login.btn-sign-in.btn-sso-shibboleth'))  # Replace with an element that appears after login
     )
-    print("Located login button")
+    print("Located IMSS credentials button")
 except:
-    print("No login button")
+    print("No IMSS credentials button")
 
 imss_button = driver.find_element(By.CSS_SELECTOR, '.btn.btn-primary.btn-block.btn-external-login.btn-sign-in.btn-sso-shibboleth')
 imss_button.click()
@@ -74,7 +74,8 @@ password_field.send_keys(Keys.RETURN)
 
 # Wait for some time to ensure the login is successful
 time.sleep(2)
-print(driver.title)
+if driver.title is not None:
+    print('Logged in.')
 
 cookie_list = driver.get_cookies();
 shibsession_field = ''

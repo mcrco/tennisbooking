@@ -1,34 +1,9 @@
-import requests
-import argparse
-from datetime import datetime, timedelta
-
-# Get date for default date values (2 days in advance)
-current_date = datetime.now()
-future_date = current_date + timedelta(days=2)
-
-parser = argparse.ArgumentParser(
-        prog='Court 6 Tennis Court Booker',
-        description='Books court 6 from 4-6 given month year and date'
-        )
-
-parser.add_argument('-y', '--year', type=str, default=future_date.year)
-parser.add_argument('-m', '--month', type=str, default=future_date.month)
-parser.add_argument('-d', '--day', type=str, default=future_date.day)
-# parser.add_argument('-fo', '--four', action='store_true', default=False)
-# parser.add_argument('-fi', '--five', action='store_true', default=False)
-
-args = parser.parse_args()
-
 url = 'https://rec.caltech.edu/booking/reserve'
-
-with open('./cookie') as f:
-    cookie = f.readline().strip()
 
 headers = {
     'accept': '*/*',
     'accept-language': 'en-US,en;q=0.9',
     'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-    'cookie': cookie,
     'dnt': '1',
     'origin': 'https://rec.caltech.edu',
     'priority': 'u=1, i',
@@ -42,52 +17,14 @@ headers = {
     'x-requested-with': 'XMLHttpRequest'
 }
 
-timeslot_45_data = {
-    'bId': 'f20965ff-b976-4e7d-9ad5-f7759b823407',
-    'fId': 'ce97fc31-bd28-4d79-a884-79962fbf179b',
-    'aId': 'dd77f214-dbf1-4f48-a653-fc130dca1bdc',
-    'tsId': '2d2f5b9b-1187-4100-bd2b-8604917dce43',
-    'tsiId': '00000000-0000-0000-0000-000000000000',
-    'y': args.year,
-    'm': args.month,
-    'd': args.day,
-    't': '',
-    'v': '0'
+bodies = {
+    4: {
+        '5-6': "bId=f20965ff-b976-4e7d-9ad5-f7759b823407&fId=9502d610-f2ae-4881-a307-8403712d2d8f&aId=57b4c6de-1dc1-41fc-a562-ed3072d8d4aa&tsId=aaeea0a2-54cd-4f3e-b02b-1024fd65d755&tsiId=73329e31-d759-4f12-accb-db48c2002aec&y={date.year}&m={date.month}&d={date.day}&t=&v=0",
+        '6-7': "bId=f20965ff-b976-4e7d-9ad5-f7759b823407&fId=9502d610-f2ae-4881-a307-8403712d2d8f&aId=6c4d4642-10fa-481e-a5e6-2cd29ffeddee&tsId=3a8fa6c9-a086-4dd1-9c2c-7e596dca8a8c&tsiId=a0ddfe67-d9b0-4489-b337-1b2ef6054b31&y={date.year}&m={date.month}&d={date.day}&t=&v=0"
+    },
+    6: {
+        '4-5': "bId=f20965ff-b976-4e7d-9ad5-f7759b823407&fId=ce97fc31-bd28-4d79-a884-79962fbf179b&aId=dd77f214-dbf1-4f48-a653-fc130dca1bdc&tsId=2d2f5b9b-1187-4100-bd2b-8604917dce43&tsiId=00000000-0000-0000-0000-000000000000&y={date.year}&m={date.month}&d={date.day}&t=&v=0",
+        '5-6': "bId=f20965ff-b976-4e7d-9ad5-f7759b823407&fId=ce97fc31-bd28-4d79-a884-79962fbf179b&aId=a511e63d-742c-4862-8573-851641b7f4ed&tsId=aaeea0a2-54cd-4f3e-b02b-1024fd65d755&tsiId=d0b35142-48e1-470c-bc26-e1df9161e6e9&y={date.year}&m={date.month}&d={date.day}&t=&v=0"
+    }
 }
 
-timeslot_56_data = {
-    'bId': 'f20965ff-b976-4e7d-9ad5-f7759b823407',
-    'fId': 'ce97fc31-bd28-4d79-a884-79962fbf179b',
-    'aId': 'a511e63d-742c-4862-8573-851641b7f4ed',
-    'tsId': 'aaeea0a2-54cd-4f3e-b02b-1024fd65d755',
-    'tsiId': 'd0b35142-48e1-470c-bc26-e1df9161e6e9',
-    'y': args.year,
-    'm': args.month,
-    'd': args.day,
-    't': '',
-    'v': '0'
-}
-
-timeslot_67_data = {
-    'bId': 'f20965ff-b976-4e7d-9ad5-f7759b823407',
-    'fId': 'ce97fc31-bd28-4d79-a884-79962fbf179b',
-    'aId': 'cb4436ee-7a73-4c83-af29-f3511bfeb155',
-    'tsId': '3a8fa6c9-a086-4dd1-9c2c-7e596dca8a8c',
-    'tsiId': 'f5765830-c9f2-4014-8281-cfee7d672440',
-    'y': args.year,
-    'm': args.month,
-    'd': args.day,
-    't': '',
-    'v': '0'
-}
-
-# if args.four:
-# response = requests.post(url, headers=headers, data=timeslot_45_data)
-# print('Request for 4-5: ', response.json()['Success'])
-
-# if args.five:
-response = requests.post(url, headers=headers, data=timeslot_56_data)
-print('Request for 5-6: ', response.json()['Success'])
-
-response = requests.post(url, headers=headers, data=timeslot_67_data)
-print('Request for 6-7: ', response.json()['Success'])
