@@ -2,6 +2,7 @@ import requests
 import argparse
 from datetime import datetime, timedelta
 from request import url, headers, bodies
+import curlify
 
 def book_court(court, timeslot, date):
     try:
@@ -11,11 +12,12 @@ def book_court(court, timeslot, date):
         return False
 
     response = requests.post(url=url, headers=headers, data=data)
-    if response.status_code == 200:
+    # print(curlify.to_curl(response.request))
+    if response.status_code == 200 and response.json()['Success']:
         print(f"Successfully booked court {court} from {timeslot}.")
         return True
     else:
-        print(f"Failed to book court {court} from {timeslot}:", response.status_code)
+        print(f"Failed to book court {court} from {timeslot}: status code", response.status_code)
         return False
 
 def main():
