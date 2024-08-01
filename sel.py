@@ -2,7 +2,6 @@ import argparse
 import calendar
 import time
 import json
-import os
 
 from cryptography.fernet import Fernet
 from datetime import datetime, timedelta
@@ -13,6 +12,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 from pyvirtualdisplay.display import Display
 
 # Get current date to set as default booking date
@@ -89,38 +89,53 @@ password_field.send_keys(password)
 password_field.send_keys(Keys.RETURN)
 
 # Wait for some time to ensure the login is successful
-time.sleep(2)
+time.sleep(1)
 
 # Go to tennis court booking site
 driver.get('https://rec.caltech.edu/booking/f20965ff-b976-4e7d-9ad5-f7759b823407')
 
+# Wait until booking date appears
+date_text = str(calendar.month_name[args.month][:3]) + ' ' + str(args.day)
+print(date_text)
 try:
-    date_text = str(calendar.month_name[args.month][:3]) + ' ' + str(args.day)
-    button = driver.find_element(By.XPATH, f"//p[contains(text(), '{date_text}')]/ancestor::button")
-    button.click()
-except: 
-    print('Unable to find booking button for', formatted_date)
+    element = WebDriverWait(driver, 5).until(
+        EC.presence_of_element_located((By.XPATH, f"//p[contains(text(), '{date_text}')]/ancestor::button"))
+    )
+    print("Located tab for", formatted_date)
+    date_button = driver.find_element(By.XPATH, f"//p[contains(text(), '{date_text}')]/ancestor::button")
+    date_button.click()
+except:
+    print('Unable to find tab for', formatted_date)
+
+with open('page.html', 'w', encoding='utf-8') as file:
+    page_source = driver.page_source
+    file.write(page_source)
 
 timeslots = ['5 - 6 PM', '6 - 7 PM']
 for court in range(1, 7):
     court_text = f"Tennis Court #{court}"
+    print('Checking', court_text)
     try:
-        button = driver.find_element(By.XPATH, f"//span[contains(text(), '{court_text}')]/ancestor::button")
-        button.click()
-        print('Checking for', court_text)
-        for t in timeslots:
-            try:
-                xpath = f"//div[contains(@class, 'booking-slot-item') and .//span[contains(text(), '1 spot available')] and .//p[contains(text(), t)]]"
-                slot_element = driver.find_element(By.XPATH, xpath)
-                button = slot_element.find_element(By.TAG_NAME, 'button')
-                button.click()
-                print('Booked', court_text, 'for', t)
-                timeslots.remove(t)
-            except:
-                print('Could not book time slot for', court_text, 'at', t)
-    except:
+        element = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((By.XPATH, f"//button[contains(@class, 'text-primary') and .//span[contains(text(), '{court_text}')]]"))
+        )
+    except TimeoutException:
         print('Could not find tab for', court_text)
         continue
+
+    button = driver.find_element(By.XPATH, f"//button[contains(@class, 'text-primary') and .//span[contains(text(), '{court_text}')]]")
+    button.click()
+    time.sleep(0.5)
+
+    for t in timeslots:
+        try:
+            xpath = f"//button[@data-slot-text='{t}' and contains(text(), 'Book Now')]"
+            button = driver.find_element(By.XPATH, xpath)
+            button.click()
+            print('Booked', court_text, 'for', t)
+            timeslots.remove(t)
+        except:
+            continue
 
 # Close the browser
 driver.quit()
