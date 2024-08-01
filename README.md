@@ -9,7 +9,7 @@ Add a ```credentials.json``` file with the following content:
 }
 ```
 
-You can encrypt your password using ```encrypt.py```.
+You can encrypt your password and auto-save it in ```credentials.json``` using ```encrypt.py``` and then entering your password.
 
 # Run
 
