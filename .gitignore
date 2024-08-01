@@ -2,6 +2,7 @@ cookie
 credentials.json
 run.sh
 cron.sh
+sel.sh
 __pycache__/
 logfile.log
 logs/
