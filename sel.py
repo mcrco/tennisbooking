@@ -13,6 +13,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from tqdm import tqdm
 from pyvirtualdisplay.display import Display
 
 # Get current date to set as default booking date
@@ -69,6 +70,7 @@ except:
 
 imss_button = driver.find_element(By.CSS_SELECTOR, '.btn.btn-primary.btn-block.btn-external-login.btn-sign-in.btn-sso-shibboleth')
 imss_button.click()
+time.sleep(0.5)
 
 # Get username and encrypted password
 with open('credentials.json', 'r') as f:
@@ -107,14 +109,14 @@ try:
 except:
     print('Unable to find tab for', formatted_date)
 
-with open('page.html', 'w', encoding='utf-8') as file:
-    page_source = driver.page_source
-    file.write(page_source)
-
 timeslots = ['5 - 6 PM', '6 - 7 PM']
-for court in range(1, 7):
+courts = [2, 4, 1, 3, 6]
+book_results = ""
+for court in tqdm(courts):
+    if not timeslots:
+
+        break
     court_text = f"Tennis Court #{court}"
-    print('Checking', court_text)
     try:
         element = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.XPATH, f"//button[contains(@class, 'text-primary') and .//span[contains(text(), '{court_text}')]]"))
@@ -132,10 +134,12 @@ for court in range(1, 7):
             xpath = f"//button[@data-slot-text='{t}' and contains(text(), 'Book Now')]"
             button = driver.find_element(By.XPATH, xpath)
             button.click()
-            print('Booked', court_text, 'for', t)
+            book_results += f"Booked {court_text} for {t}"
             timeslots.remove(t)
         except:
             continue
+
+print(book_results)
 
 # Close the browser
 driver.quit()
