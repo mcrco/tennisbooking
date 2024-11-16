@@ -7,3 +7,6 @@ sel.sh
 __pycache__/
 logfile.log
 logs/
+.python-version
+hello.py
+log/
