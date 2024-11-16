@@ -1,6 +1,8 @@
 # Setup
 
-Add a ```credentials.json``` file with the following content:
+You can encrypt your password and auto-save it in ```credentials.json``` using ```encrypt.py``` and then entering your password.
+
+You should have a ```credentials.json``` file with the following content:
 
 ```
 {
@@ -8,8 +10,6 @@ Add a ```credentials.json``` file with the following content:
   "password": {your encrypted password}
 }
 ```
-
-You can encrypt your password and auto-save it in ```credentials.json``` using ```encrypt.py``` and then entering your password.
 
 # Run
 
