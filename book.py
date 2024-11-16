@@ -29,6 +29,7 @@ parser.add_argument('-k', '--key', type=str)
 parser.add_argument('-y', '--year', type=str, default=future_date.year)
 parser.add_argument('-m', '--month', type=str, default=future_date.month)
 parser.add_argument('-d', '--day', type=str, default=future_date.day)
+parser.add_argument('-t', '--time', type=str, default='4 - 5 PM')
 
 args = parser.parse_args()
 
@@ -36,7 +37,9 @@ formatted_date = f"{args.month}/{args.day}/{args.year}"
 if args.month < 1 or args.month > 12 or args.day < 1 or args.day > 31:
     raise Exception('Invalid date:', formatted_date)
 
-print("Booking court for", formatted_date)
+timeslot = args.time
+
+print("Booking court for", formatted_date, "at", timeslot)
 
 # Set up the WebDriver
 display = Display(visible=False, size=(1080, 1920))  
@@ -98,7 +101,6 @@ driver.get('https://rec.caltech.edu/booking/f20965ff-b976-4e7d-9ad5-f7759b823407
 
 # Wait until booking date appears
 date_text = str(calendar.month_name[args.month][:3]) + ' ' + str(args.day)
-print(date_text)
 try:
     element = WebDriverWait(driver, 5).until(
         EC.presence_of_element_located((By.XPATH, f"//p[contains(text(), '{date_text}')]/ancestor::button"))
@@ -109,13 +111,10 @@ try:
 except:
     print('Unable to find tab for', formatted_date)
 
-timeslots = ['5 - 6 PM', '6 - 7 PM']
-courts = [2, 4, 1, 3, 6]
-book_results = ""
+courts = [6, 4, 3, 1, 2]
+result = None
+print('Checking courts...')
 for court in tqdm(courts):
-    if not timeslots:
-
-        break
     court_text = f"Tennis Court #{court}"
     try:
         element = WebDriverWait(driver, 5).until(
@@ -129,17 +128,19 @@ for court in tqdm(courts):
     button.click()
     time.sleep(0.5)
 
-    for t in timeslots:
-        try:
-            xpath = f"//button[@data-slot-text='{t}' and contains(text(), 'Book Now')]"
-            button = driver.find_element(By.XPATH, xpath)
-            button.click()
-            book_results += f"Booked {court_text} for {t}"
-            timeslots.remove(t)
-        except:
-            continue
+    try:
+        xpath = f"//button[@data-slot-text='{timeslot}' and contains(text(), 'Book Now')]"
+        button = driver.find_element(By.XPATH, xpath)
+        button.click()
+        
+        result = f"Booked {court_text} for {timeslot}"
+    except:
+        continue
 
-print(book_results)
+if result is not None:
+    print(result)
+print("Unable to find court for", timeslot, "on", formatted_date)
+
 
 # Close the browser
 driver.quit()
