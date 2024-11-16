@@ -16,5 +16,5 @@ You can encrypt your password and auto-save it in ```credentials.json``` using `
 To run the script, execute the following command:
 
 ```
-python sel.py -k {your decryption key}
+python book.py -k {your decryption key}
 ```
