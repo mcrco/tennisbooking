@@ -1,8 +1,9 @@
+from getpass import getpass
 from cryptography.fernet import Fernet
 import json
 
 # Generate a key for encryption and decryption
-# You must store this key securely. If you lose it, you will not be able to decrypt the data.
+# Store this key securely. If lost, regenerate it and store new encrypted password
 key = Fernet.generate_key()
 print(f"Encryption key: {key.decode()}")  # Print this key and store it securely
 
@@ -10,7 +11,7 @@ print(f"Encryption key: {key.decode()}")  # Print this key and store it securely
 cipher = Fernet(key)
 
 # Define the password to be encrypted
-password = ''
+password = getpass()
 
 # Encrypt the password
 encrypted_password = cipher.encrypt(password.encode())
