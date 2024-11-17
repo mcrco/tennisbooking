@@ -56,6 +56,7 @@ logging.info(f"Booking court for {formatted_date} at {timeslot}")
 # Set up the WebDriver
 options = Options()
 options.add_argument("--headless=new")
+options.add_argument("--window-size=1920,1080")
 driver = webdriver.Chrome(options=options)
 
 # Open the login page
