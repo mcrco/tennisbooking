@@ -45,7 +45,7 @@ log_dir = os.path.join(script_dir, "log")
 if not os.path.exists(log_dir):
     os.mkdir(log_dir)
 
-timestamp = datetime.now().strftime("%Y%m%d%_H%M%S")
+timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
 log_file = f"{timestamp}.log"
 log_path = os.path.join(log_dir, log_file)
 logger = logging.getLogger(__name__)

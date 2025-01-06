@@ -4,6 +4,7 @@ run.sh
 test.sh
 cron.sh
 sel.sh
+*.sh
 __pycache__/
 logfile.log
 logs/
